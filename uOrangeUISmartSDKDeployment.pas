@@ -4011,6 +4011,8 @@ begin
           //添加不存在的Jar
           for I := 0 to AAndroidJarList.Count-1 do
           begin
+            if Trim(AAndroidJarList[I])='' then Continue;
+
             if AExistedAndroidJarNameList.IndexOf(ExtractFileName(AAndroidJarList[I]))=-1 then
             begin
               AJavaReferenceNode:=AXMLNode.AddChild('JavaReference');
@@ -4079,6 +4081,9 @@ begin
       //先解压aar文件
       for I := 0 to AAndroidAarList.Count-1 do
       begin
+          if Trim(AAndroidAarList[I])='' then Continue;
+          
+
           //dmcBig_MediaPicker\support-compat-28.0.0.aar
           AAndroidAarFilePath:=AAndroidAarList[I];
           AAndroidAarRelativeDirPath:=ChangeFileExt(AAndroidAarList[I],'_aar')+'\';
@@ -4123,6 +4128,23 @@ begin
             ADeployConfigList.Add(ADeployConfig);
 
           end;
+
+          //判断jni目录是否存在需要布署的文件,如果有,则需要布署
+          //无论有没有,都布署即可,省事
+          if DirectoryExists(AAndroidAarDirPath+'jni') then
+          begin
+
+            ADeployConfig:=TDeployConfig.Create;
+            ADeployConfig.Platform_:='Android';
+            ADeployConfig.LocalDir:=AAndroidAarRelativeDirPath+'jni\';
+            ADeployConfig.RemoteDir:='library\lib\';
+
+            ADeployConfigList.Add(ADeployConfig);
+
+          end;
+
+
+
       end;
 
 

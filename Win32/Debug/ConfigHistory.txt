@@ -1,3 +1,4 @@
+C:\OrangeFreeSDK\HuaweiScan\HuaweiSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\dmcBig_MediaPicker\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\dmcBig_MediaPicker\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HMSSdk\DeployConfig.ini
