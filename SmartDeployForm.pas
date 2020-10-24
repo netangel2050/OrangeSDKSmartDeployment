@@ -199,7 +199,6 @@ type
     edtIconCornerSizePercent: TEdit;
     lblIconCornerSize: TLabel;
     Button3: TButton;
-    btnProcessAndroidAAR: TButton;
     Button4: TButton;
     Button5: TButton;
     TabSheet1: TTabSheet;
@@ -209,6 +208,7 @@ type
     Button6: TButton;
     odSelectAndroidAar: TOpenDialog;
     Button7: TButton;
+    btnProcessAndroidAAR: TButton;
     procedure btnProcessDeployConfigClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -1723,9 +1723,9 @@ begin
         Exit;
       end;
 
-//      //要生成工程文件包名的R.jar
-//      AAndroidManifestXmlFilePaths.Add(AProjectGenPath+'AndroidManifest.xml');
-//      AGenJarFileNamesNoExt.Add(AProjectName);
+      //要生成工程文件包名的R.jar
+      AAndroidManifestXmlFilePaths.Add(AProjectGenPath+'AndroidManifest.xml');
+      AGenJarFileNamesNoExt.Add(AProjectName);
 
 
 

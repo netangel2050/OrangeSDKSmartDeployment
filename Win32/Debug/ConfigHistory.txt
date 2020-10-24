@@ -1,7 +1,11 @@
-C:\OrangeFreeSDK\HuaweiScan\HuaweiSDK\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HMSSdk\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\dmcBig_MediaPicker\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\dmcBig_MediaPicker\DeployConfig.ini
-C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HMSSdk\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HuaweiSDK\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\SGQRCodeScanSDK\DeployConfig.ini
+C:\OrangeFreeSDK\SGQRCodeScan\SGQRCodeScanSDK\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\华为推送\HMSSdk\DeployConfig.ini
+C:\OrangeFreeSDK\HuaweiScan\HuaweiSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\BGAQRCodeSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HXPhotoPicker\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\IOS图片选择器HXPhotoPicker\HXPhotoPicker\DeployConfig.ini
@@ -17,7 +21,6 @@ C:\MyFiles\ThirdPartySDK\Android的二维码扫描me_dm7_barcodescanner\me_dm7_barcode
 C:\MyFiles\ThirdPartySDK\个推推送接口\RestClient\GetuiPushSDK\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\支付宝支付接口\App\AlipaySDK\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\微信支付接口\APP\WeiXinSDK\DeployConfig.ini
-C:\MyFiles\ThirdPartySDK\华为推送\HMSSdk\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\小米推送\XiaoMiPushSDK\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\Android的ZBar二维码扫描me_dm7_barcodescanner\me_dm7_barcodescanner\布署配置.ini
 C:\MyFiles\OrangeUIProduct\茶叶CY生态\App_Shop\GetuiPushSDK\Getui配置文件_Android_2_13_0_0_IOS_2_0_0_0.ini
