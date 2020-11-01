@@ -22,7 +22,7 @@ uses
   Types,
   FMX.Graphics,
   FMX.Types,
-  uFuncCommon,
+  uFuncCommon_Copy,
 
   Winapi.GDIPAPI,
   Winapi.GDIPOBJ,
@@ -30,7 +30,7 @@ uses
 
   Winapi.ShellAPI,
 
-  XSuperObject,
+  XSuperObject_Copy,
 
   uOrangeUISmartSDKDeployment,
 
@@ -205,10 +205,10 @@ type
     lvNeedUseSDKs: TListView;
     btnBatchProcessSDKs: TButton;
     Button1: TButton;
-    Button6: TButton;
+    btnProcessAndroidAAR: TButton;
     odSelectAndroidAar: TOpenDialog;
     Button7: TButton;
-    btnProcessAndroidAAR: TButton;
+    btnGenerateAndroidAAR: TButton;
     procedure btnProcessDeployConfigClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -237,7 +237,7 @@ type
     procedure btnGenerateJarClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure btnAddAndroidAarClick(Sender: TObject);
-    procedure btnProcessAndroidAARClick(Sender: TObject);
+    procedure btnGenerateAndroidAARClick(Sender: TObject);
     procedure btnSelectProjectLaunchImageClick(Sender: TObject);
     procedure btnGenerateProjectLaunchImageEverySizeClick(Sender: TObject);
     procedure btnProcessProjectLaunchImageClick(Sender: TObject);
@@ -257,7 +257,7 @@ type
     procedure Button5Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure btnBatchProcessSDKsClick(Sender: TObject);
-    procedure Button6Click(Sender: TObject);
+    procedure btnProcessAndroidAARClick(Sender: TObject);
     procedure Button7Click(Sender: TObject);
   private
     //工程启动图片文件
@@ -1631,7 +1631,7 @@ begin
 
 end;
 
-procedure TfrmSmartDeploy.btnProcessAndroidAARClick(Sender: TObject);
+procedure TfrmSmartDeploy.btnGenerateAndroidAARClick(Sender: TObject);
 var
   I:Integer;
   AProjectFilePath:String;
@@ -1891,7 +1891,7 @@ begin
 
 end;
 
-procedure TfrmSmartDeploy.Button6Click(Sender: TObject);
+procedure TfrmSmartDeploy.btnProcessAndroidAARClick(Sender: TObject);
 begin
   //因为需要计算出相对目录
   if not CheckProjectFileIsExist then Exit;
@@ -1996,7 +1996,10 @@ begin
 
   Self.btnAddAndroidJar.Caption:=Langs_AddAndroidJar[LangKind];
   Self.btnProcessAndroidJar.Caption:=Langs_ProcessAndroidJar[LangKind];
+
+  Self.btnAddAndroidAar.Caption:=Langs_AddAndroidAar[LangKind];
   Self.btnProcessAndroidAAR.Caption:=Langs_ProcessAndroidAar[LangKind];
+  Self.btnGenerateAndroidAAR.Caption:=Langs_GenerateAndroidAar[LangKind];
 
 
   Self.lblIOSLinkerOptionsHint.Caption:=Langs_IOSLinkerOptionsHint[LangKind];

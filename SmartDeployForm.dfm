@@ -1129,23 +1129,23 @@ object frmSmartDeploy: TfrmSmartDeploy
               TabOrder = 0
               OnClick = btnAddAndroidAarClick
             end
-            object Button6: TButton
+            object btnProcessAndroidAAR: TButton
               Left = 198
               Top = 16
               Width = 192
               Height = 25
               Caption = #22788#29702'Aar'
               TabOrder = 1
-              OnClick = Button6Click
+              OnClick = btnProcessAndroidAARClick
             end
-            object btnProcessAndroidAAR: TButton
+            object btnGenerateAndroidAAR: TButton
               Left = 396
               Top = 16
               Width = 240
               Height = 25
               Caption = #29983#25104'R.Java'
               TabOrder = 2
-              OnClick = btnProcessAndroidAARClick
+              OnClick = btnGenerateAndroidAARClick
             end
           end
           object memAndroidAars: TMemo

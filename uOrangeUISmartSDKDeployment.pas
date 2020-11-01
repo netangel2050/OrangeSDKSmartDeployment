@@ -140,8 +140,12 @@ const
       ('添加AndroidJar','Add Android Jar','');
   Langs_ProcessAndroidJar : array[Low(TLangKind)..High(TLangKind)] of string =
       ('处理AndroidJar','Process Android Jar','');
+  Langs_AddAndroidAar : array[Low(TLangKind)..High(TLangKind)] of string =
+      ('添加AndroidAar','Add Android Aar','');
   Langs_ProcessAndroidAAR : array[Low(TLangKind)..High(TLangKind)] of string =
-      ('处理aar(生成R.jar)','Process Android aar(Generate R.jar)','');
+      ('处理AndroidAar','Process Android Aar','');
+  Langs_GenerateAndroidAAR : array[Low(TLangKind)..High(TLangKind)] of string =
+      ('生成R.jar','Generate R.jar','');
 
 
   Langs_IOSLinkerOptionsHint : array[Low(TLangKind)..High(TLangKind)] of string =
