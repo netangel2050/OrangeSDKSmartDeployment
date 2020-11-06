@@ -818,9 +818,15 @@ end;
 
 procedure TfrmSmartDeploy.btnDeleteDeployConfigClick(Sender: TObject);
 begin
+  if FDeployConfigListDataSet.RecordCount=1 then
+  begin
+    if FDeployConfigListDataSet.Eof then Self.FDeployConfigListDataSet.First;
+  end;
+
   //删除
   if Not FDeployConfigListDataSet.Eof then
   begin
+
     Self.FDeployConfigListDataSet.Delete;
 
     SaveDataSetToDeployConfigList(Self.FProjectConfig.FDeployConfigList,
@@ -1723,11 +1729,21 @@ begin
         Exit;
       end;
 
-      //要生成工程文件包名的R.jar
-      AAndroidManifestXmlFilePaths.Add(AProjectGenPath+'AndroidManifest.xml');
-      AGenJarFileNamesNoExt.Add(AProjectName);
 
 
+      //要生成工程文件包名的R.jar,不需要了
+//      AAndroidManifestXmlFilePaths.Add(AProjectGenPath+'AndroidManifest.xml');
+//      AGenJarFileNamesNoExt.Add(AProjectName);
+
+//      if ATempDexedJarFilePath<>'' then
+//      begin
+//        ABatStringList.Add('del '+'"'+ATempDexedJarFilePath+'"');
+//      end;
+//C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\Android\Release\
+//R_JAVA_TestMediaPicker_D10_4-dexed.jar
+//R_JAVA_TestMediaPicker-dexed.jar
+      DeleteFile(ExtractFilePath(AProjectFilePath)+'Android\Release\'+'R_JAVA_'+AProjectName+'-dexed'+'.jar'
+                        );
 
 
 

@@ -40,12 +40,16 @@ object frmSmartDeploy: TfrmSmartDeploy
       Top = 90
       Width = 1083
       Height = 509
-      ActivePage = tsAndroidJar
+      ActivePage = tsDeployConfig
       Align = alClient
       TabOrder = 0
       object tsCurrent: TTabSheet
         Caption = #24403#21069#24067#32626
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel2: TPanel
           Left = 0
           Top = 0
@@ -330,6 +334,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object tsVariable: TTabSheet
         Caption = 'SDK'#21464#37327#37197#32622
         ImageIndex = 7
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel10: TPanel
           Left = 0
           Top = 0
@@ -371,6 +379,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object tsAndroidManifestConfig: TTabSheet
         Caption = 'Android'#26435#38480#37197#32622
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Splitter1: TSplitter
           Left = 0
           Top = 475
@@ -458,6 +470,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object tsWeiXinJar: TTabSheet
         Caption = #29983#25104'Jar'
         ImageIndex = 5
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         DesignSize = (
           1075
           478)
@@ -572,6 +588,10 @@ object frmSmartDeploy: TfrmSmartDeploy
           Visible = False
           object TabSheet2: TTabSheet
             Caption = 'WXEntryActivity.java'
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object memWXEntryActivity: TMemo
               Left = 0
               Top = 0
@@ -663,6 +683,10 @@ object frmSmartDeploy: TfrmSmartDeploy
           object TabSheet3: TTabSheet
             Caption = 'WXPayEntryActivity.java'
             ImageIndex = 1
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object memWXPayEntryActivity: TMemo
               Left = 0
               Top = 0
@@ -753,6 +777,10 @@ object frmSmartDeploy: TfrmSmartDeploy
           object TabSheet4: TTabSheet
             Caption = 'OnWeixinListener.java'
             ImageIndex = 2
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object memOnWeixinListener: TMemo
               Left = 0
               Top = 0
@@ -778,6 +806,10 @@ object frmSmartDeploy: TfrmSmartDeploy
           object TabSheet5: TTabSheet
             Caption = 'wxapi.pas'
             ImageIndex = 3
+            ExplicitLeft = 0
+            ExplicitTop = 0
+            ExplicitWidth = 0
+            ExplicitHeight = 0
             object memWxApiPas: TMemo
               Left = 0
               Top = 0
@@ -1074,6 +1106,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object tsAndroidJar: TTabSheet
         Caption = 'AndroidJar'#37197#32622
         ImageIndex = 4
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel5: TPanel
           Left = 0
           Top = 0
@@ -1173,6 +1209,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object tsIOSConfig: TTabSheet
         Caption = 'iOS'#24211#37197#32622
         ImageIndex = 6
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object Panel4: TPanel
           Left = 0
           Top = 0
@@ -1337,6 +1377,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object tsIconConfig: TTabSheet
         Caption = #24037#31243#22270#26631#21644#21551#21160#22270#29255#35774#32622
         ImageIndex = 3
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object pnlAppIcon: TPanel
           Left = 0
           Top = 0
@@ -1571,6 +1615,10 @@ object frmSmartDeploy: TfrmSmartDeploy
       object TabSheet1: TTabSheet
         Caption = #25209#37327#37197#32622#24037#31243#25152#38656#35201#30340'SDK'
         ImageIndex = 8
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lvNeedUseSDKs: TListView
           Left = 0
           Top = 0

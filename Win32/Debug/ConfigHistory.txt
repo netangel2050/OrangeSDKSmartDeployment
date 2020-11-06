@@ -1,6 +1,12 @@
-C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HMSSdk\DeployConfig.ini
-C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\dmcBig_MediaPicker\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\dmcBig_MediaPicker\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HMSSdk\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\Compat_V7\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\Lifecycle\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\Support_V4\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\Compat_V7\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\Support_V4\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\Lifecycle\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\dmcBig_MediaPicker\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HuaweiSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\SGQRCodeScanSDK\DeployConfig.ini
 C:\OrangeFreeSDK\SGQRCodeScan\SGQRCodeScanSDK\DeployConfig.ini

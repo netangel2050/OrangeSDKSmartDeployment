@@ -1339,11 +1339,11 @@ begin
   //先删除临时文件
 
   //R_JAVA_TwitterLogin-dexed.jar
-  if ATempDexedJarFilePath<>'' then
-  begin
-    ABatStringList.Add('del '+'"'+ATempDexedJarFilePath+'"');
-  end;
-  
+//  if ATempDexedJarFilePath<>'' then
+//  begin
+//    ABatStringList.Add('del '+'"'+ATempDexedJarFilePath+'"');
+//  end;
+
 
 
   ABatStringList.Add('@echo off');
