@@ -280,6 +280,8 @@ type
 
 
     procedure SyncEnabledSDKS;
+
+
     { Private declarations }
   public
     function CheckProjectFileIsExist:Boolean;
@@ -1637,6 +1639,7 @@ begin
 
 end;
 
+
 procedure TfrmSmartDeploy.btnGenerateAndroidAARClick(Sender: TObject);
 var
   I:Integer;
@@ -1806,6 +1809,7 @@ begin
 
 
       ABatStringList:=TStringList.Create;
+      //所需要生成R.java的
       for I := 0 to AAndroidManifestXmlFilePaths.Count-1 do
       begin
           //将相关的src
@@ -2419,7 +2423,8 @@ var
   AAarRelativePath:String;
 begin
   //因为需要计算出相对目录
-  if not CheckProjectFileIsExist then Exit;
+  if not CheckProjectFileIsExist then
+     Exit;
 
   AProjectPath:=Self.edtProjectFilePath.Text;
 
@@ -2657,7 +2662,7 @@ begin
 
   //加载配置,初始表格列宽度
   Self.LoadFromINI(ExtractFilePath(Application.ExeName)+'Config.ini');
-
+//  cmbDelphiVersions
 
   Self.memIOSPlistRootNodes.Clear;
 
@@ -2939,6 +2944,8 @@ var
 begin
   AIniFile:=TIniFile.Create(AINIFilePath);
 
+  cmbDelphiVersions.Text:=AIniFile.ReadString('','JDKDelphiVersion',Self.cmbDelphiVersions.Text);
+
   Self.edtJDKDir.Text:=AIniFile.ReadString('','JDKDir',Self.edtJDKDir.Text);
   Self.edtAndroidSDKDir.Text:=AIniFile.ReadString('','AndroidSDKDir',Self.edtAndroidSDKDir.Text);
   Self.edtAndroidSDKPlatform.Text:=AIniFile.ReadString('','AndroidSDKPlatform',Self.edtAndroidSDKPlatform.Text);
@@ -2971,6 +2978,7 @@ var
 begin
   AIniFile:=TIniFile.Create(AINIFilePath);
 
+  AIniFile.WriteString('','JDKDelphiVersion',Self.cmbDelphiVersions.Text);
   AIniFile.WriteString('','JDKDir',Self.edtJDKDir.Text);
   AIniFile.WriteString('','AndroidSDKDir',Self.edtAndroidSDKDir.Text);
   AIniFile.WriteString('','AndroidSDKPlatform',Self.edtAndroidSDKPlatform.Text);

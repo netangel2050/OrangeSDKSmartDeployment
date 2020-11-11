@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899-12-30 00:00:00.000.678,C:\MyFiles\OrangeProjectCommon\OrangeUI_Copy\uFuncCommon_Copy.pas=</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.972,C:\MyFiles\OrangeProjectCommon\OrangeUI_Copy\XSuperObject_Copy.pas=</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.391,=C:\MyFiles\ThirdPartySDK\OrangeSDKSmartDeployment\uOrangeUISmartSDKDeployment.pas</Transaction>
-  </Transactions>
+	</Transactions>
 </BorlandProject>
