@@ -1,9 +1,13 @@
-C:\MyFiles\ThirdPartySDK\支付宝支付接口\App\AlipaySDK\DeployConfig.ini
-C:\MyFiles\ThirdPartySDK\微信支付接口\APP\WeiXinSDK\DeployConfig.ini
-C:\MyFiles\ThirdPartySDK\腾讯超级播放器\App\SuperPlayer\DeployConfig.ini
-C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\SuperPlayer\DeployConfig.ini
-C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\dmcBig_MediaPicker\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\华为推送\HMSSdk\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HMSSdk\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\TBSSDK\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\XiaoMiPushSDK\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\BGAQRCodeSDK\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\dmcBig_MediaPicker\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\腾讯超级播放器\App\SuperPlayer\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\微信支付接口\APP\WeiXinSDK\DeployConfig.ini
+C:\MyFiles\ThirdPartySDK\支付宝支付接口\App\AlipaySDK\DeployConfig.ini
+C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\SuperPlayer\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\Compat_V7\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\Lifecycle\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\Support_V4\DeployConfig.ini
@@ -14,7 +18,6 @@ C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\dmcBig_MediaPicker\DeployCon
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HuaweiSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\SGQRCodeScanSDK\DeployConfig.ini
 C:\OrangeFreeSDK\SGQRCodeScan\SGQRCodeScanSDK\DeployConfig.ini
-C:\MyFiles\ThirdPartySDK\华为推送\HMSSdk\DeployConfig.ini
 C:\OrangeFreeSDK\HuaweiScan\HuaweiSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\BGAQRCodeSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\HXPhotoPicker\DeployConfig.ini
@@ -25,7 +28,6 @@ C:\MyFiles\ThirdPartySDK\腾讯超级播放器\App2\SuperPlayer\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\Android的二维码扫描BGAQRCode\BGAQRCodeSDK\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\TBS腾讯浏览服务\TBSSDK_fileReader\TBSSDK\DeployConfig.ini
 C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\WeiXinSDK\微信SDKDeployConfig_Android_5_5_8_IOS_1_8_6_1.ini
-C:\MyFiles\OrangeUIProduct\验证码查看APP\App_Client\XiaoMiPushSDK\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\Android的二维码扫描me_dm7_barcodescanner\me_dm7_barcodescanner\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\个推推送接口\RestClient\GetuiPushSDK\DeployConfig.ini
 C:\MyFiles\ThirdPartySDK\小米推送\XiaoMiPushSDK\DeployConfig.ini

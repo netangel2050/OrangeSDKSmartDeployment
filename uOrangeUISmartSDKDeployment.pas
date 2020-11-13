@@ -34,9 +34,11 @@ uses
   FMX.Forms,
   FMX.Dialogs,
 
+  {$IFNDEF IN_ORANGESDK}
   ZLib,
   VCLUnZip,
   VCLZip,
+  {$ENDIF}
 
   XSuperObject_Copy,
 
@@ -473,6 +475,8 @@ type
 //      FGeneratedJarFileName:String;
 //      //WeixinSDK
 //      FGeneratedJarDir:String;
+      //删除aar文件生成的R.java没用引用到的资源ID  阿蒙 2020-11-10
+      procedure RemoveNoUseResource(RTextFileName, RJavaFileName:string; NewRJavaFileName:string='');
 
       function GenerateJar(AProjectFilePath:String;
 
@@ -629,7 +633,7 @@ function GenerateWeiXinJarBatToProject(ATempRootDir:String;
                                         ):Boolean;
 
 //生成R.Java的命令
-function GenerateResJavaBatStringList(
+function GenerateResJavaBatString(
                           AGenResJavaSrcDirPath:String;
                           //C:\Users\Public\Documents\Embarcadero\Studio\17.0\PlatformSDKs\android-sdk-windows\build-tools\22.0.1\aapt
                           AAndroidSDKAaptExeFilePath:String;
@@ -642,7 +646,7 @@ function GenerateResJavaBatStringList(
 //                          //
 //                          AGenRJavaBatFilePath:String;
 
-                          ABatStringList:TStringList
+                          var AGenR_Java_Command:String
                           ):Boolean;
 //function GenerateResJavaBat(
 //                          AGenResJavaSrcDirPath:String;
@@ -2401,7 +2405,7 @@ begin
 
 end;
 
-function GenerateResJavaBatStringList(
+function GenerateResJavaBatString(
                             //R.java生成后放在哪个目录
                             AGenResJavaSrcDirPath:String;
                             //C:\Users\Public\Documents\Embarcadero\Studio\17.0\PlatformSDKs\android-sdk-windows\build-tools\22.0.1\aapt
@@ -2415,10 +2419,10 @@ function GenerateResJavaBatStringList(
 //                            //Main.Gen_R_Java.bat
 //                            AGenRJavaBatFilePath:String;
 
-                            ABatStringList:TStringList
+                            var AGenR_Java_Command:String
                             ):Boolean;
 var
-  AGenR_Java_Command:String;
+  AAnsiGenR_Java_Command:AnsiString;
 begin
   Result:=False;
 
@@ -2456,20 +2460,36 @@ begin
   AGenR_Java_Command:=
       '"'+AAndroidSDKAaptExeFilePath+'"'
       +' '+'package -f -m'
+      //生成的源码目录
       +' '+'-J '+'"'+AGenResJavaSrcDirPath+'"'
+      //资源目录
       +' '+'-S '+'"'+AProjectResPath+'"'
+      //所使用的系统jar
       +' '+'-I '+'"'+AAndroidSystemJarFilePath+'"'
 //      +' '+'-M '+'"'+'AndroidManifest.xml'+'"'
+      //AndroidManifest.xml路径,主要使用了里面的包名
       +' '+'-M '+'"'+AAndroidManifestXmlFilePath+'"'
       ;
-  ABatStringList.Add(AGenR_Java_Command);
+  //立即执行
+  //ShellExecute不立即生成
+//  ShellExecute(0, nil, PChar(AGenR_Java_Command), nil, nil, SW_SHOWMAXIMIZED);
 
-  //调试
-//  ABatStringList.Add('pause');
-  ABatStringList.Add('');
-  ABatStringList.Add('');
-  ABatStringList.Add('');
-  ABatStringList.Add('');
+  {$IFDEF MSWINDOWS}
+  //WinExec立即生成
+  AAnsiGenR_Java_Command:=AGenR_Java_Command;
+  WinExec(PAnsiChar(AAnsiGenR_Java_Command),SW_SHOWMAXIMIZED);
+  {$ENDIF MSWINDOWS}
+
+
+
+//  ABatStringList.Add(AGenR_Java_Command);
+//
+//  //调试
+////  ABatStringList.Add('pause');
+//  ABatStringList.Add('');
+//  ABatStringList.Add('');
+//  ABatStringList.Add('');
+//  ABatStringList.Add('');
 
 
 
@@ -2775,6 +2795,166 @@ begin
 
 end;
 
+
+procedure TProjectConfig.RemoveNoUseResource(RTextFileName, RJavaFileName:string; NewRJavaFileName:string='');
+var
+  lstResource: TStringList;
+  lstText: TStringList;
+  lstJava: TStringList;
+  lstNew: TStringList;
+  lstTmp: TStringList;
+
+  i: integer;
+  strLine: string;
+  strClassName: string;
+  strKeyName: string;
+begin
+  if NewRJavaFileName = '' then
+     NewRJavaFileName := RJavaFileName;
+  if not FileExists(RTextFileName) then
+     raise Exception.Create('文件' +RTextFileName+'找不到!');
+  if not FileExists(RJavaFileName) then
+     raise Exception.Create('文件' +RJavaFileName+'找不到!');
+  lstText := TStringList.Create;
+  lstText.LoadFromFile(RTextFileName);
+  lstJava := TStringList.Create;
+  lstJava.LoadFromFile(RJavaFileName);
+  lstResource := TStringList.Create;
+  lstNew := TStringList.Create;
+
+  // 先提取资源ID Key
+  lstTmp := TStringList.Create;
+
+  try
+
+    for i := 0 to lstText.Count - 1 do
+    begin
+      strLine := lstText.Strings[i];
+      strLine := StringReplace(strLine, ' ', ',', [rfReplaceAll]);
+      lstTmp.CommaText := strLine;
+      lstResource.Add(lstTmp[1] + '-' + lstTmp[2]); // 要第2和第3栏
+    end;
+
+    //
+    i := 0;
+    while i <= lstJava.Count - 1 do
+    begin
+      strLine := lstJava.Strings[i];
+      if Pos('/*', strLine) > 0 then // 备注行
+      begin
+        lstNew.Add(strLine);
+
+        // 一直找下一行的 */
+        i := i + 1;
+        strLine := lstJava.Strings[i];
+        while (Pos('*/', strLine) <= 0) and (i < lstJava.Count - 1) do
+        begin
+          lstNew.Add(strLine);
+
+          i := i + 1;
+          strLine := lstJava.Strings[i];
+        end;
+        lstNew.Add(strLine);
+
+        i := i + 1;
+        strLine := lstJava.Strings[i];
+      end;
+
+      if Pos('public static final class', strLine) > 0 then
+      begin
+        lstNew.Add(strLine);
+        strClassName := Trim(StringReplace(strLine,
+          'public static final class', '', []));
+        strClassName := Trim(StringReplace(strClassName, '{', '', []));
+        i := i + 1;
+        strLine := lstJava.Strings[i];
+        while (Trim(strLine) <> '}') and (Trim(strLine) <> '};') and (i <= lstJava.Count - 1) do // 一直找到下一个 }
+        begin
+          if Pos('public static final ', strLine) > 0 then
+          begin
+            strKeyName := Trim(StringReplace(strLine,
+              'public static final ', '', []));
+            strKeyName := Copy(strKeyName, Pos(' ', strKeyName) + 1, 255);
+            strKeyName := Trim(Copy(strKeyName, 1, Pos('=', strKeyName) - 1));
+            if lstResource.IndexOf(strClassName + '-' + strKeyName) > -1 then
+            begin
+              // 找到就加进去
+              lstNew.Add(strLine);
+              if Pos('[]', strLine) > 0 then // 是数组一直加到 '}'
+              begin
+                i := i + 1;
+                strLine := lstJava.Strings[i];
+                while (Pos('}', strLine) <= 0) and (i <= lstJava.Count - 1) do
+                begin
+                  lstNew.Add(strLine);
+                  i := i + 1;
+                  strLine := lstJava.Strings[i];
+                end;
+
+                if Pos('}', strLine) > 0 then
+                begin
+                  lstNew.Add(strLine);
+                end;
+              end
+            end
+            else
+            begin
+              // 在RText中资源找不到
+              if Pos('[]', strLine) > 0 then // 是数组  一直到 '}' 都不要
+              begin
+                i := i + 1;
+                strLine := lstJava.Strings[i];
+                while (Pos('}', strLine) <= 0) and (i <= lstJava.Count - 1) do
+                begin
+                  i := i + 1;
+                  strLine := lstJava.Strings[i];
+                end;
+              end;
+
+              //删除上一行的注解
+              if Copy(Trim(lstNew.Strings[lstNew.Count-1]),1,1) = '@' then
+              begin
+                lstNew.Delete(lstNew.Count-1);
+              end;
+
+            end;
+          end
+          else
+          begin
+            lstNew.Add(strLine); // 不是 'public static final ' 行
+          end;
+          i := i + 1;
+          strLine := lstJava.Strings[i];
+        end;
+
+        if (Trim(strLine) = '}') or (Trim(strLine) = '};') then
+        begin
+          lstNew.Add(strLine);
+          i := i + 1;
+        end;
+      end
+      else
+      begin
+        lstNew.Add(strLine);
+        i := i + 1;
+      end;
+    end;
+
+    lstNew.SaveToFile(NewRJavaFileName);
+    //Form
+
+  finally
+    lstText.Free;
+    lstJava.Free;
+    lstResource.Free;
+    lstNew.Free;
+    lstTmp.Free;
+  end;
+
+end;
+
+
+
 function TProjectConfig.GenerateJar(AProjectFilePath:String;
                                     //WeixinSDK
                                     AGeneratedJarDir:String;
@@ -3004,6 +3184,11 @@ var
 
   AAndroidSDKAaptExeFilePath:String;
   AAndroidSystemJarFilePath:String;
+
+  AGenR_Java_Command:String;
+  AR_TXT_FilePath:String;
+  AR_JAVA_FilePath:String;
+  AR_JAVA_FilePath1:String;
 begin
       //ATempRootDir为ProjectFilePath\JarGen\Project1\
 
@@ -3022,8 +3207,18 @@ begin
       ForceDirectories(AGenResJavaSrcDirPath+'\');
 
 
+      //判断aar中是否存在R.txt,如果存在,那么要去除R.java中多余的资源ID
+      AR_TXT_FilePath:=ExtractFilePath(AAndroidManifestXmlFilePath)+'R.txt';
+      AR_JAVA_FilePath:=AGenResJavaSrcDirPath+'\'+ReplaceStr(GetAndroidPackageName(AAndroidManifestXmlFilePath),'.','\')+'\R.java';
+      AR_JAVA_FilePath1:=AR_JAVA_FilePath;//AGenResJavaSrcDirPath+'\'+ReplaceStr(GetAndroidPackageName(AAndroidManifestXmlFilePath),'.','\')+'\R1.java';
+      if FileExists(AR_JAVA_FilePath) then
+      begin
+        DeleteFile(AR_JAVA_FilePath);
+      end;
+
+
       //生成R.java源码的批处理文件
-      GenerateResJavaBatStringList(
+      GenerateResJavaBatString(
 
 
                           //准备生成的jar源码的目录
@@ -3034,10 +3229,12 @@ begin
                           //aapt.exe路径
 //                          'C:\Users\Public\Documents\Embarcadero\Studio\17.0\PlatformSDKs\android-sdk-windows\build-tools\22.0.1\aapt.exe',
 //                          Self.edtAndroidSDKBuildTools.Text+'\'+'aapt.exe',
-                          AAndroidSDKBuildTools+'\'+'aapt.exe',
+//                          AAndroidSDKBuildTools+'\'+'aapt.exe',
+                          AAndroidSDKBuildTools+'aapt.exe',
                           //Android系统jar包android.jar路径
 //                          'C:\Users\Public\Documents\Embarcadero\Studio\17.0\PlatformSDKs\android-sdk-windows\platforms\android-22\android.jar',
 //                          Self.edtAndroidSDKPlatform.Text+'\'+'android.jar',
+//                          AAndroidSDKPlatform+'\'+'android.jar',
                           AAndroidSDKPlatform+'\'+'android.jar',
 
 
@@ -3057,10 +3254,11 @@ begin
 //                          //生成R.Java的.bat文件路径
 //                          ATempRootDir+'1.Gen_R_Java_'+AGenJarFileNameNoExt+'.bat',
 
-                          ABatStringList
+                          AGenR_Java_Command//ABatStringList
                           );
 
 
+//      ABatStringList.Add(AGenR_Java_Command);
 
 //      //等待R.java生成
 //      Sleep(3000);
@@ -3068,9 +3266,27 @@ begin
       //判断是否生成成功
 
 
+      if FileExists(AR_TXT_FilePath) then
+      begin
+        //等R.Java生成好
+        while not FileExists(AR_JAVA_FilePath) do
+        begin
+          Application.ProcessMessages;
+          Sleep(1000);
+        end;
+        Sleep(3000);
+
+
+        if FileExists(AR_JAVA_FilePath) then
+        begin
+          RemoveNoUseResource(AR_TXT_FilePath,AR_JAVA_FilePath,AR_JAVA_FilePath1);
+        end;
+      end;
 
 
       AJavaSourceFiles:=TStringList.Create;
+
+
 
 
       //遍历有哪些Java源文件需要编译
@@ -4063,7 +4279,9 @@ var
   AAndroidAarFilePath:String;
   AAndroidAarRelativeDirPath:String;
   AAndroidAarDirPath:String;
+  {$IFNDEF IN_ORANGESDK}
   ziper:TVCLZip;
+  {$ENDIF}
   ADeployConfig:TDeployConfig;
   ADeployConfigList:TDeployConfigList;
 begin
@@ -4100,6 +4318,8 @@ begin
 
           if not DirectoryExists(AAndroidAarDirPath) then
           begin
+
+            {$IFNDEF IN_ORANGESDK}
             //目录不存在,则解压
             ziper:=TVCLZip.Create(application);
             ziper.ZipName:=AAndroidAarFilePath;//获取压缩文件名
@@ -4111,6 +4331,7 @@ begin
             ziper.RecreateDirs:=true;//创建目录
             ziper.UnZip;
             ziper.Free;
+            {$ENDIF}
 
             //将里面的classes.jar重命名
             ReNameFile(AAndroidAarDirPath+'\'+'classes.jar',
