@@ -2808,7 +2808,11 @@ var
   strLine: string;
   strClassName: string;
   strKeyName: string;
+  AEncoding:TEncoding;
 begin
+  AEncoding:=TMBCSEncoding.Create(936);
+
+
   if NewRJavaFileName = '' then
      NewRJavaFileName := RJavaFileName;
   if not FileExists(RTextFileName) then
@@ -2818,9 +2822,10 @@ begin
   lstText := TStringList.Create;
   lstText.LoadFromFile(RTextFileName);
   lstJava := TStringList.Create;
-  lstJava.LoadFromFile(RJavaFileName);
+  lstJava.LoadFromFile(RJavaFileName,AEncoding);
   lstResource := TStringList.Create;
   lstNew := TStringList.Create;
+
 
   // 先提取资源ID Key
   lstTmp := TStringList.Create;
@@ -2940,7 +2945,7 @@ begin
       end;
     end;
 
-    lstNew.SaveToFile(NewRJavaFileName);
+    lstNew.SaveToFile(NewRJavaFileName,AEncoding);
     //Form
 
   finally
@@ -2949,6 +2954,7 @@ begin
     lstResource.Free;
     lstNew.Free;
     lstTmp.Free;
+    AEncoding.Free;
   end;
 
 end;
