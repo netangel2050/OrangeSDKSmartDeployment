@@ -209,6 +209,7 @@ type
     odSelectAndroidAar: TOpenDialog;
     Button7: TButton;
     btnGenerateAndroidAAR: TButton;
+    chkGenerateAndroid64AAR: TCheckBox;
     procedure btnProcessDeployConfigClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -1663,10 +1664,18 @@ var
   AGenJarBatFilePath:String;
 
 //  AResDir:String;
+
+  AAndroidPlatform:String;
 begin
   //因为需要计算出相对目录
   if not CheckProjectFileIsExist then Exit;
 
+
+  AAndroidPlatform:='Android';
+  if chkGenerateAndroid64AAR.Checked then
+  begin
+    AAndroidPlatform:='Android64';
+  end;
 
 
   if not FProjectConfig.GetAndroidSDKSetting(
@@ -1717,7 +1726,7 @@ begin
       //当前工程的临时文件生成目录,用于获取生成的AndroidManifest.xml和res目录
       //比如C:\MyFiles\ThirdPartySDK\Android的ZBar二维码扫描me_dm7_barcodescanner\Android\Release\Project1\
       AProjectGenPath:=ExtractFilePath(AProjectFilePath)
-                        +'Android\Release\'
+                        +AAndroidPlatform+'\Release\'
                         +AProjectName+'\';
 
 
@@ -1745,7 +1754,7 @@ begin
 //C:\MyFiles\ThirdPartySDK\Android图片视频选择器dmcBig_mediapicker\Android\Release\
 //R_JAVA_TestMediaPicker_D10_4-dexed.jar
 //R_JAVA_TestMediaPicker-dexed.jar
-      DeleteFile(ExtractFilePath(AProjectFilePath)+'Android\Release\'+'R_JAVA_'+AProjectName+'-dexed'+'.jar'
+      DeleteFile(ExtractFilePath(AProjectFilePath)+AAndroidPlatform+'\Release\'+'R_JAVA_'+AProjectName+'-dexed'+'.jar'
                         );
 
 
@@ -2682,6 +2691,18 @@ begin
   begin
     Self.cmbConfigFilePath.Items.LoadFromFile(ExtractFilePath(Application.ExeName)+'ConfigHistory.txt');
   end;
+
+
+
+  lvNeedUseSDKs.Items.Clear;
+  lvNeedUseSDKs.Items.Add.Caption:='AlipaySDK';
+  lvNeedUseSDKs.Items.Add.Caption:='WeixinSDK';
+  lvNeedUseSDKs.Items.Add.Caption:='Compat_V7';
+  lvNeedUseSDKs.Items.Add.Caption:='GlideSDK_V4_0_0';
+  lvNeedUseSDKs.Items.Add.Caption:='Lifecycle';
+  lvNeedUseSDKs.Items.Add.Caption:='SuperPlayer';
+  lvNeedUseSDKs.Items.Add.Caption:='Support_V4';
+  lvNeedUseSDKs.Items.Add.Caption:='VideoPagerSDK';
 
 
 

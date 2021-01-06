@@ -374,9 +374,11 @@ type
     //应该要根据远程目录和文件名来判断
     function FindDeployFileXMLNode(ADeployFile:TDeployFile;
                                    AXMLNode: IXMLNode;
-                                    var ADeployFilePlatformXMLNode:IXMLNode;
-                                    var AEnabledDeployFileXMLNode:IXMLNode;
-                                    AExistsLocalNameList:TStringList
+//                                    var ADeployFilePlatformXMLNode:IXMLNode;
+//                                    var AEnabledDeployFileXMLNode:IXMLNode;
+                                    AExistsLocalNameList:TStringList;
+                                    //是否少了一些平台没有布署
+                                    var AIsLostSomePlatform:Boolean
                                     ):IXMLNode;
     //找到文件布署的平台的XMLNode
     function FindDeployFilePlatformXMLNode(APlatform:String;
@@ -401,6 +403,9 @@ type
                                       AProjectFilePath:String):Boolean;
     function AddDeployFileToXMLNode(ADeployFile:TDeployFile;
                                       AXMLNode: IXMLNode):Boolean;
+    function AddDeployFilePlatformToXMLNode(ADeployFile:TDeployFile;
+                                            ADeployFilePlatform:TDeployFilePlatform;
+                                            ADeployFileXMLNode: IXMLNode):Boolean;
 
 
 
@@ -804,6 +809,7 @@ begin
               );
             if not AProjectConfig.ProcessAll(AProjectFilePath) then
             begin
+              ShowMessage(ASuperObject.A['enabled_sdks'].S[I]+'布署失败');
               Exit;
             end;
           finally
@@ -1620,17 +1626,99 @@ end;
 
 { TProjectConfig }
 
+//function AddDeployFileToXMLNodeWithPlatform():Boolean;
+//begin
+//
+//end;
+
+function TProjectConfig.AddDeployFilePlatformToXMLNode(ADeployFile: TDeployFile;
+                                            ADeployFilePlatform:TDeployFilePlatform;
+                                            ADeployFileXMLNode: IXMLNode): Boolean;
+var
+  ADeployFilePlatformXMLNode:IXMLNode;
+  ARemoteDirNode:IXMLNode;
+  ARemoteNameNode:IXMLNode;
+  APlatformOverwriteNode:IXMLNode;
+  APlatformEnabledNode:IXMLNode;
+begin
+
+      Result:=False;
+
+
+      //判断这个本地文件是否存在
+      ADeployFilePlatformXMLNode:=FindDeployFilePlatformXMLNode(
+                                      ADeployFilePlatform.Platform_,
+                                      ADeployFileXMLNode);
+      if ADeployFilePlatformXMLNode=nil then
+      begin
+        ADeployFilePlatformXMLNode:=ADeployFileXMLNode.AddChild('Platform');
+      end;
+      //哪个平台
+      ADeployFilePlatformXMLNode.Attributes['Name']:=ADeployFilePlatform.Platform_;
+
+
+
+      //布署到哪个目录
+      ARemoteDirNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('RemoteDir');
+      //FindChildXMLNode('RemoteDir',ADeployFilePlatformXMLNode);
+      if ARemoteDirNode=nil then
+      begin
+        ARemoteDirNode:=ADeployFilePlatformXMLNode.AddChild('RemoteDir');
+      end;
+      //如果之前是布署到res\drawable\,现在要布署到res\drawable-hdpi\
+      ARemoteDirNode.Text:=ADeployFilePlatform.RemoteDir;
+
+
+
+      //布署到远程目录中的哪个文件
+      ARemoteNameNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('RemoteName');
+      //FindChildXMLNode('RemoteName',ADeployFilePlatformXMLNode);
+      if ARemoteNameNode=nil then
+      begin
+        ARemoteNameNode:=ADeployFilePlatformXMLNode.AddChild('RemoteName');
+      end;
+      ARemoteNameNode.Text:=ADeployFilePlatform.RemoteName;
+
+
+
+
+      //是否覆盖
+      APlatformOverwriteNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('Overwrite');
+      //FindChildXMLNode('Overwrite',ADeployFilePlatformXMLNode);
+      if APlatformOverwriteNode=nil then
+      begin
+        APlatformOverwriteNode:=ADeployFilePlatformXMLNode.AddChild('Overwrite');
+      end;
+      APlatformOverwriteNode.Text:=ADeployFilePlatform.Overwrite;
+
+
+      //是否启用
+      if ADeployFilePlatform.Enabled<>'' then
+      begin
+        APlatformEnabledNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('Enabled');
+        if APlatformEnabledNode=nil then
+        begin
+          APlatformEnabledNode:=ADeployFilePlatformXMLNode.AddChild('Enabled');
+        end;
+        APlatformEnabledNode.Text:=ADeployFilePlatform.Enabled;
+      end;
+
+
+      Result:=True;
+
+end;
+
 function TProjectConfig.AddDeployFileToXMLNode(ADeployFile: TDeployFile;
   AXMLNode: IXMLNode): Boolean;
 var
   ALastDeployFileNodeIndex:Integer;
   ADeployFileXMLNode:IXMLNode;
-  ADeployFilePlatformXMLNode:IXMLNode;
+//  ADeployFilePlatformXMLNode:IXMLNode;
   I: Integer;
-  ARemoteDirNode:IXMLNode;
-  ARemoteNameNode:IXMLNode;
-  APlatformOverwriteNode:IXMLNode;
-  APlatformEnabledNode:IXMLNode;
+//  ARemoteDirNode:IXMLNode;
+//  ARemoteNameNode:IXMLNode;
+//  APlatformOverwriteNode:IXMLNode;
+//  APlatformEnabledNode:IXMLNode;
 begin
   //不存在,则添加
   //添加到最后一个
@@ -1657,69 +1745,16 @@ begin
   for I := 0 to ADeployFile.Platforms.Count-1 do
   begin
 
-      //判断这个本地文件是否存在
-      ADeployFilePlatformXMLNode:=FindDeployFilePlatformXMLNode(
-                                      ADeployFile.Platforms[I].Platform_,
-                                      ADeployFileXMLNode);
-      if ADeployFilePlatformXMLNode=nil then
-      begin
-        ADeployFilePlatformXMLNode:=ADeployFileXMLNode.AddChild('Platform');
-      end;
-      //哪个平台
-      ADeployFilePlatformXMLNode.Attributes['Name']:=ADeployFile.Platforms[I].Platform_;
 
-
-
-      //布署到哪个目录
-      ARemoteDirNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('RemoteDir');
-      //FindChildXMLNode('RemoteDir',ADeployFilePlatformXMLNode);
-      if ARemoteDirNode=nil then
-      begin
-        ARemoteDirNode:=ADeployFilePlatformXMLNode.AddChild('RemoteDir');
-      end;
-      //如果之前是布署到res\drawable\,现在要布署到res\drawable-hdpi\
-      ARemoteDirNode.Text:=ADeployFile.Platforms[I].RemoteDir;
-
-
-
-      //布署到远程目录中的哪个文件
-      ARemoteNameNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('RemoteName');
-      //FindChildXMLNode('RemoteName',ADeployFilePlatformXMLNode);
-      if ARemoteNameNode=nil then
-      begin
-        ARemoteNameNode:=ADeployFilePlatformXMLNode.AddChild('RemoteName');
-      end;
-      ARemoteNameNode.Text:=ADeployFile.Platforms[I].RemoteName;
-
-
-
-
-      //是否覆盖
-      APlatformOverwriteNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('Overwrite');
-      //FindChildXMLNode('Overwrite',ADeployFilePlatformXMLNode);
-      if APlatformOverwriteNode=nil then
-      begin
-        APlatformOverwriteNode:=ADeployFilePlatformXMLNode.AddChild('Overwrite');
-      end;
-      APlatformOverwriteNode.Text:=ADeployFile.Platforms[I].Overwrite;
-
-
-      //是否启用
-      if ADeployFile.Platforms[I].Enabled<>'' then
-      begin
-        APlatformEnabledNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('Enabled');
-        if APlatformEnabledNode=nil then
-        begin
-          APlatformEnabledNode:=ADeployFilePlatformXMLNode.AddChild('Enabled');
-        end;
-        APlatformEnabledNode.Text:=ADeployFile.Platforms[I].Enabled;
-      end;
-
-
-
+    AddDeployFilePlatformToXMLNode(ADeployFile,
+                                   ADeployFile.Platforms[I],
+                                   ADeployFileXMLNode
+                                    );
 
   end;
 end;
+
+
 
 procedure TProjectConfig.CheckAndroidManifestTemplateXmlFile(AProjectFilePath: String);
 var
@@ -2421,8 +2456,10 @@ function GenerateResJavaBatString(
 
                             var AGenR_Java_Command:String
                             ):Boolean;
+{$IFDEF MSWINDOWS}
 var
   AAnsiGenR_Java_Command:AnsiString;
+{$ENDIF MSWINDOWS}
 begin
   Result:=False;
 
@@ -2456,6 +2493,7 @@ begin
 //  ABatStringList.Add('ECHO AProjectResPath '+AProjectResPath);
 //  ABatStringList.Add('ECHO AAndroidManifestXmlFilePath '+AAndroidManifestXmlFilePath);
 
+  {$IFDEF MSWINDOWS}
 
   AGenR_Java_Command:=
       '"'+AAndroidSDKAaptExeFilePath+'"'
@@ -2474,7 +2512,6 @@ begin
   //ShellExecute不立即生成
 //  ShellExecute(0, nil, PChar(AGenR_Java_Command), nil, nil, SW_SHOWMAXIMIZED);
 
-  {$IFDEF MSWINDOWS}
   //WinExec立即生成
   AAnsiGenR_Java_Command:=AGenR_Java_Command;
   WinExec(PAnsiChar(AAnsiGenR_Java_Command),SW_SHOWMAXIMIZED);
@@ -2646,9 +2683,13 @@ end;
 
 function TProjectConfig.FindDeployFileXMLNode(ADeployFile: TDeployFile;
                                               AXMLNode: IXMLNode;
-                                              var ADeployFilePlatformXMLNode:IXMLNode;
-                                              var AEnabledDeployFileXMLNode:IXMLNode;
-                                              AExistsLocalNameList:TStringList):IXMLNode;
+                                              //文件布署节点下面的子平台节点
+//                                              var ADeployFilePlatformXMLNode:IXMLNode;
+                                              //大的文件布署节点
+//                                              var AEnabledDeployFileXMLNode:IXMLNode;
+                                              AExistsLocalNameList:TStringList;
+                                              //是否少了一些平台没有布署
+                                              var AIsLostSomePlatform:Boolean):IXMLNode;
 var
   I: Integer;
   J: Integer;
@@ -2667,8 +2708,9 @@ begin
       //列出所有DeployFile
       //要根据远程目录来判断RemoteDir+RemoteName
       Result:=nil;
-      ADeployFilePlatformXMLNode:=nil;
-      AEnabledDeployFileXMLNode:=nil;
+//      ADeployFilePlatformXMLNode:=nil;
+//      AEnabledDeployFileXMLNode:=nil;
+      AIsLostSomePlatform:=False;
       AExistsLocalNameList.Clear;
 
 
@@ -2690,14 +2732,24 @@ begin
                 ADeployFileXMLNode:=AXMLNode.ChildNodes[I];
 
 
+
+
                 //方法一:
-//                //如果存在LocalName一致的节点,那么直接返回
-//                if ADeployFile.LocalName=AXMLNode.ChildNodes[I].Attributes['LocalName'] then
-//                begin
-//                    Inc(ASameCount);
-//                    Result:=AXMLNode.ChildNodes[I];
-//                    Break;
-//                end;
+                //如果存在LocalName一致的节点,那么直接返回
+                if (ADeployFile.LocalName=AXMLNode.ChildNodes[I].Attributes['LocalName'])
+                  or ('\'+ADeployFile.LocalName='\'+AXMLNode.ChildNodes[I].Attributes['LocalName'])
+                  then
+                begin
+                    //Inc(ASameCount);
+                    Result:=AXMLNode.ChildNodes[I];
+                    //Break;
+                end
+                else
+                begin
+                    Continue;
+                end;
+
+
 
 
 
@@ -2722,8 +2774,13 @@ begin
                       FindDeployFilePlatformXMLNode(ADeployFile.Platforms[J].Platform_,
                                                     ADeployFileXMLNode);
 
+
+
+
                     if ATempDeployFilePlatformXMLNode<>nil then
                     begin
+                        //有这个平台的节点
+
 
                         ARemoteDir:='';
                         ARemoteName:='';
@@ -2757,38 +2814,51 @@ begin
                           and (ARemoteName=ADeployFile.Platforms[J].RemoteName) then
                         begin
                             Result:=ADeployFileXMLNode;
-                            ADeployFilePlatformXMLNode:=ATempDeployFilePlatformXMLNode;
+//                            ADeployFilePlatformXMLNode:=ATempDeployFilePlatformXMLNode;
 
                             AExistsLocalNameList.Add(ADeployFileXMLNode.Attributes['LocalName']);
 
-                            //启用的布署项才行
-                            if SameText(AEnabled,'true') then
-                            begin
-                                if AEnabledDeployFileXMLNode=nil then
-                                begin
-                                    AEnabledDeployFileXMLNode:=ADeployFileXMLNode;
-                                end
-                                else
-                                begin
-                                    //已经有启用的,那么这个不再启用
-                                    if AEnabledNode=nil then
-                                    begin 
-                                        AEnabledNode:=ATempDeployFilePlatformXMLNode.AddChild('Enabled');
-                                    end;
-                                    AEnabledNode.Text:='false';
 
-                                end;
-                            end;
+//                            //启用的布署项才行
+//                            if SameText(AEnabled,'true') then
+//                            begin
+//                                if AEnabledDeployFileXMLNode=nil then
+//                                begin
+//                                    AEnabledDeployFileXMLNode:=ADeployFileXMLNode;
+//                                end
+//                                else
+//                                begin
+//                                    //已经有启用的,那么这个不再启用
+//                                    if AEnabledNode=nil then
+//                                    begin
+//                                        AEnabledNode:=ATempDeployFilePlatformXMLNode.AddChild('Enabled');
+//                                    end;
+//                                    AEnabledNode.Text:='false';
+//
+//                                end;
+//                            end;
 
-                            Break;
+
+
+
+                            //Break;
                         end;
 
 
+                    end
+                    else
+                    begin
+                        //没有这个平台的布署节点,则需要添加
+                        AIsLostSomePlatform:=True;
+
                     end;
+
+
+
 
                 end;
 
-
+                Break;
           end;
 
       end;
@@ -3774,9 +3844,13 @@ begin
   //布署配置
   Self.FDeployConfigList.Clear(True);
 
+
+
   for I := 0 to 100 do
   begin
     ASectionName:='DeployConfigList '+IntToStr(I);
+
+
     if AIniFile.SectionExists(ASectionName) then
     begin
 
@@ -3787,7 +3861,12 @@ begin
 
       Self.FDeployConfigList.Add(ADeployConfig);
     end;
+
+
+
   end;
+
+
 
 
 
@@ -4358,6 +4437,7 @@ begin
 
             ADeployConfigList.Add(ADeployConfig);
 
+
           end;
 
           //判断jni目录是否存在需要布署的文件,如果有,则需要布署
@@ -4398,6 +4478,8 @@ begin
           AProjectFilePath
           ) then Exit;
 
+
+      Result:=True;
 
 
 
@@ -5186,14 +5268,17 @@ function TProjectConfig.SaveDeployFileToXMLNode(ADeployFile: TDeployFile;
                                                 AProjectFilePath:String): Boolean;
 var
   ALastDeployFileNodeIndex:Integer;
-  AEnabledDeployFileXMLNode:IXMLNode;
+//  AEnabledDeployFileXMLNode:IXMLNode;
   ADeployFileXMLNode:IXMLNode;
-  ADeployFilePlatformXMLNode:IXMLNode;
+//  ADeployFilePlatformXMLNode:IXMLNode;
 
   I: Integer;
   ARemoteDirNode:IXMLNode;
   ARemoteNameNode:IXMLNode;
+  AIsLostSomePlatform:Boolean;
   AExistsLocalNameList:TStringList;
+
+
 
 //  AXMLAFilePath:String;
 //  AXMLBFilePath:String;
@@ -5205,6 +5290,9 @@ var
 //  ADeployFilePlatform:TDeployFilePlatform;
 begin
 
+
+
+
     //<DeployFile LocalName="TBUISDK\APK\lib\armeabi\libTbDemuxer.so"
     //        Configuration="Release"
     //        Class="File">
@@ -5215,140 +5303,165 @@ begin
     //    </Platform>
     //</DeployFile>
 
-    AEnabledDeployFileXMLNode:=nil;
+//    AEnabledDeployFileXMLNode:=nil;
+    AIsLostSomePlatform:=False;
     AExistsLocalNameList:=TStringList.Create;
+
+
 
     //判断是否已经存在部署XML节点
     //目前是使用最简单的方法
     //根据RemoteDir+RemoteName+Platform来判断
     ADeployFileXMLNode:=FindDeployFileXMLNode(ADeployFile,
                                               AXMLNode,
-                                              ADeployFilePlatformXMLNode,
-                                              AEnabledDeployFileXMLNode,
-                                              AExistsLocalNameList);
+//                                              ADeployFilePlatformXMLNode,
+//                                              AEnabledDeployFileXMLNode,
+                                              AExistsLocalNameList,
+                                              AIsLostSomePlatform);
 
-    if AEnabledDeployFileXMLNode<>nil then
-    begin
-      ADeployFileXMLNode:=AEnabledDeployFileXMLNode;
-    end;
+//    if AEnabledDeployFileXMLNode<>nil then
+//    begin
+//      ADeployFileXMLNode:=AEnabledDeployFileXMLNode;
+//    end;
+
+
+
+
 
     if (ADeployFileXMLNode<>nil)
       //只合并XML文件
-      and SameText(ExtractFileExt(ADeployFile.LocalName),'.xml') then
+      //and SameText(ExtractFileExt(ADeployFile.LocalName),'.xml')
+      then
     begin
+          //已经存在DeployFile的节点,但是没有Platform的子节点
+          //只需要添加Platform的子节点
+
+          //这个文件要布署到哪些平台
+          for I := 0 to ADeployFile.Platforms.Count-1 do
+          begin
 
 
-        //已存在,合并XML
-        //是自己吗?根据LocalName来判断
-        //是上次配置的自己吗?
-        if (AExistsLocalNameList.IndexOf(ADeployFile.LocalName)<>-1)
-          //SameText(ADeployFileXMLNode.Attributes['LocalName'],ADeployFile.LocalName)
-          then
-        begin
-            //是自己,跳过
+            AddDeployFilePlatformToXMLNode(ADeployFile,
+                                           ADeployFile.Platforms[I],
+                                           ADeployFileXMLNode
+                                           );
 
-        end
-        //此布署项是启用的,需要合并,
-        //不启用的不合并
-        else if AEnabledDeployFileXMLNode<>nil then
-        begin
+          end;
 
 
-
-            //需要合并
-            DoDeployConfigLog(Self,'已经存在此布署文件'+ADeployFile.LocalName);
-
-
-//                //不是自己,合并
-//                AXMLAFilePath:=
-//                          ConvertRelativePathToAbsolutePath(ExtractFilePath(AProjectFilePath),
-//                              ADeployFileXMLNode.Attributes['LocalName']);
 //
-//                if Not FileExists(AXMLAFilePath) then
-//                begin
-//    //                DoDeployConfigLog(Self,'此布署文件不存在'+ADeployFileXMLNode.Attributes['LocalName']);
-//                    //不存在,则跳过,
-//                    //不过有一种情况是style.xml
-//                    if (ADeployFileXMLNode.LocalName='Android\Release\styles.xml')
-//                      or (ADeployFileXMLNode.LocalName='Android\Debug\styles.xml') then
-//                    begin
-//                      Exit;
-//                    end
-//                    else
-//                    begin
-//                      Exit;
-//                    end;
-//                end;
+//        //已存在,合并XML
+//        //是自己吗?根据LocalName来判断
+//        //是上次配置的自己吗?
+//        if (AExistsLocalNameList.IndexOf(ADeployFile.LocalName)<>-1)
+//          //SameText(ADeployFileXMLNode.Attributes['LocalName'],ADeployFile.LocalName)
+//          then
+//        begin
+//            //是自己,跳过
+//
+//        end
+//        //此布署项是启用的,需要合并,
+//        //不启用的不合并
+//        else if AEnabledDeployFileXMLNode<>nil then
+//        begin
 //
 //
 //
-//                //存在相同的xml,则需要合并
-//                //E:\DelphiTwitterKitTest\TwitterKitSDK\twitter-core-3.0.0\res\values\values.xml
-//                AXMLBFilePath:=
-//                          ConvertRelativePathToAbsolutePath(ExtractFilePath(AProjectFilePath),
-//                              ADeployFile.LocalName);
-//                //.\MixedXML\Android\values.xml
-//                ADestXMLFileName:='.'+'\'
-//                                    +'MixedXML'+'\'
-//                                    +ADeployFile.Platforms[0].Platform_+'\'
-//                                    +ExtractFileName(ADeployFile.LocalName);
-//                //E:\DelphiTwitterKitTest\MixedXML\Android\values.xml
-//                ADestXMLFilePath:=
-//                          ConvertRelativePathToAbsolutePath(ExtractFilePath(AProjectFilePath),
-//                              ADestXMLFileName);
-//                ForceDirectories(ExtractFilePath(ADestXMLFilePath));
-//
-//                //合并XML文件
-////                CombineXML(AXMLAFilePath,AXMLBFilePath,ADestXMLFilePath);
+//            //需要合并
+//            DoDeployConfigLog(Self,'已经存在此布署文件'+ADeployFile.LocalName);
 //
 //
+////                //不是自己,合并
+////                AXMLAFilePath:=
+////                          ConvertRelativePathToAbsolutePath(ExtractFilePath(AProjectFilePath),
+////                              ADeployFileXMLNode.Attributes['LocalName']);
+////
+////                if Not FileExists(AXMLAFilePath) then
+////                begin
+////    //                DoDeployConfigLog(Self,'此布署文件不存在'+ADeployFileXMLNode.Attributes['LocalName']);
+////                    //不存在,则跳过,
+////                    //不过有一种情况是style.xml
+////                    if (ADeployFileXMLNode.LocalName='Android\Release\styles.xml')
+////                      or (ADeployFileXMLNode.LocalName='Android\Debug\styles.xml') then
+////                    begin
+////                      Exit;
+////                    end
+////                    else
+////                    begin
+////                      Exit;
+////                    end;
+////                end;
+////
+////
+////
+////                //存在相同的xml,则需要合并
+////                //E:\DelphiTwitterKitTest\TwitterKitSDK\twitter-core-3.0.0\res\values\values.xml
+////                AXMLBFilePath:=
+////                          ConvertRelativePathToAbsolutePath(ExtractFilePath(AProjectFilePath),
+////                              ADeployFile.LocalName);
+////                //.\MixedXML\Android\values.xml
+////                ADestXMLFileName:='.'+'\'
+////                                    +'MixedXML'+'\'
+////                                    +ADeployFile.Platforms[0].Platform_+'\'
+////                                    +ExtractFileName(ADeployFile.LocalName);
+////                //E:\DelphiTwitterKitTest\MixedXML\Android\values.xml
+////                ADestXMLFilePath:=
+////                          ConvertRelativePathToAbsolutePath(ExtractFilePath(AProjectFilePath),
+////                              ADestXMLFileName);
+////                ForceDirectories(ExtractFilePath(ADestXMLFilePath));
+////
+////                //合并XML文件
+//////                CombineXML(AXMLAFilePath,AXMLBFilePath,ADestXMLFilePath);
+////
+////
+////
+////                //如果不是自己,因为合并过的文件项不用再添加到工程文件中了
+////                if not SameText(ADeployFileXMLNode.Attributes['LocalName'],ADestXMLFileName) then
+////                begin
+////
+////                    ADeployFile.Platforms[0].Enabled:='false';
+////                    AddDeployFileToXMLNode(ADeployFile,AXMLNode);
+////
+////
+////                    //并且把原先布署启用的XML节点设置为不启用布署
+////                    AEnableXMLNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('Enabled');
+////                    if AEnableXMLNode=nil then
+////                    begin
+////                      AEnableXMLNode:=ADeployFilePlatformXMLNode.AddChild('Enabled');
+////                    end;
+////                    AEnableXMLNode.Text:='false';
+////
+////
+////                    //添加合并后的xml
+////                    AMixedXMLDeployFile:=TDeployFile.Create;
+////                    AMixedXMLDeployFile.LocalName:=ADestXMLFileName;
+////                    AMixedXMLDeployFile.Class_:='File';
+////                    //布署到指定平台
+////                    ADeployFilePlatform:=TDeployFilePlatform.Create;
+////                    ADeployFilePlatform.Platform_:=ADeployFile.Platforms[0].Platform_;
+////
+////                    //取出文件名
+////                    ADeployFilePlatform.RemoteName:=ADeployFile.Platforms[0].RemoteName;
+////                    //取出文件路径
+////                    ADeployFilePlatform.RemoteDir:=ADeployFile.Platforms[0].RemoteDir;
+////                    //避免每次都布署
+////                    ADeployFilePlatform.Overwrite:='False';
+////                    AMixedXMLDeployFile.Platforms.Add(ADeployFilePlatform);
+////
+////                    AddDeployFileToXMLNode(AMixedXMLDeployFile,AXMLNode);
+////
+////                end;
 //
-//                //如果不是自己,因为合并过的文件项不用再添加到工程文件中了
-//                if not SameText(ADeployFileXMLNode.Attributes['LocalName'],ADestXMLFileName) then
-//                begin
-//
-//                    ADeployFile.Platforms[0].Enabled:='false';
-//                    AddDeployFileToXMLNode(ADeployFile,AXMLNode);
 //
 //
-//                    //并且把原先布署启用的XML节点设置为不启用布署
-//                    AEnableXMLNode:=ADeployFilePlatformXMLNode.ChildNodes.FindNode('Enabled');
-//                    if AEnableXMLNode=nil then
-//                    begin
-//                      AEnableXMLNode:=ADeployFilePlatformXMLNode.AddChild('Enabled');
-//                    end;
-//                    AEnableXMLNode.Text:='false';
-//
-//
-//                    //添加合并后的xml
-//                    AMixedXMLDeployFile:=TDeployFile.Create;
-//                    AMixedXMLDeployFile.LocalName:=ADestXMLFileName;
-//                    AMixedXMLDeployFile.Class_:='File';
-//                    //布署到指定平台
-//                    ADeployFilePlatform:=TDeployFilePlatform.Create;
-//                    ADeployFilePlatform.Platform_:=ADeployFile.Platforms[0].Platform_;
-//
-//                    //取出文件名
-//                    ADeployFilePlatform.RemoteName:=ADeployFile.Platforms[0].RemoteName;
-//                    //取出文件路径
-//                    ADeployFilePlatform.RemoteDir:=ADeployFile.Platforms[0].RemoteDir;
-//                    //避免每次都布署
-//                    ADeployFilePlatform.Overwrite:='False';
-//                    AMixedXMLDeployFile.Platforms.Add(ADeployFilePlatform);
-//
-//                    AddDeployFileToXMLNode(AMixedXMLDeployFile,AXMLNode);
-//
-//                end;
-
-
-
-        end;
+//        end;
     end
     else
     begin
 //        Exit;//测试跳过
 
         AddDeployFileToXMLNode(ADeployFile,AXMLNode);
+
     end;
 
 
@@ -6157,6 +6270,28 @@ begin
 
 
                   ADeployFile.Platforms.Add(ADeployFilePlatform);
+
+
+                  if ADeployConfig.Platform_='Android' then
+                  begin
+
+                    //布署到指定平台
+                    ADeployFilePlatform:=TDeployFilePlatform.Create;
+                    ADeployFilePlatform.Platform_:='Android64';
+
+                    //取出文件名
+                    ADeployFilePlatform.RemoteName:=ExtractFileName(ADeployConfig.RemoteFiles[J]);
+                    //取出文件路径
+                    ADeployFilePlatform.RemoteDir:=ExtractFilePath(ADeployConfig.RemoteFiles[J]);
+                    //避免每次都布署
+                    ADeployFilePlatform.Overwrite:='False';
+                    ADeployFilePlatform.Enabled:='true';
+
+                    ADeployFile.Platforms.Add(ADeployFilePlatform);
+
+
+
+                  end;
 
 
           end;

@@ -1120,6 +1120,8 @@ object frmSmartDeploy: TfrmSmartDeploy
             Height = 47
             Align = alBottom
             TabOrder = 0
+            ExplicitLeft = -15
+            ExplicitTop = 174
             object btnAddAndroidAar: TButton
               Left = 0
               Top = 16
@@ -1146,6 +1148,14 @@ object frmSmartDeploy: TfrmSmartDeploy
               Caption = #29983#25104'R.Java'
               TabOrder = 2
               OnClick = btnGenerateAndroidAARClick
+            end
+            object chkGenerateAndroid64AAR: TCheckBox
+              Left = 656
+              Top = 19
+              Width = 185
+              Height = 17
+              Caption = '64'#20301'Android'
+              TabOrder = 3
             end
           end
           object memAndroidAars: TMemo
